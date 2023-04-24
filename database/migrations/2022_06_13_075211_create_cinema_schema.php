@@ -36,8 +36,54 @@ class CreateCinemaSchema extends Migration
      */
     public function up()
     {
-        throw new \Exception('implement in coding task 4, you can ignore this exception if you are just running the initial migrations.');
+        // Create table for movies
+        Schema::create('movies', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->timestamps();
+        });
+
+        // Create table for showrooms
+        Schema::create('showrooms', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->timestamps();
+        });
+
+        // Create table for show times
+        Schema::create('show_times', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('movie_id')->constrained();
+            $table->foreignId('showroom_id')->constrained();
+            $table->dateTime('start_time');
+            $table->dateTime('end_time');
+            $table->string('status')->default('not booked');
+            $table->timestamps();
+        });
+
+        // Create table for pricing
+        Schema::create('pricing', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('show_id')->constrained('show_times');
+            $table->decimal('normal_price');
+            $table->decimal('vip_price');
+            $table->timestamps();
+        });
+
+        // Create table for seats
+        Schema::create('seats', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('show_id')->constrained('show_times');
+            $table->string('seat_number');
+            $table->string('type');
+            $table->string('status')->default('not booked');
+            $table->timestamps();
+        });
+
+        //throw new \Exception('implement in coding task 4, you can ignore this exception if you are just running the initial migrations.')
     }
+
+        
 
     /**
      * Reverse the migrations.
@@ -46,5 +92,10 @@ class CreateCinemaSchema extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('movies');
+        Schema::dropIfExists('showrooms');
+        Schema::dropIfExists('show_times');
+        Schema::dropIfExists('pricing');
+        Schema::dropIfExists('seats');
     }
 }
